@@ -1,0 +1,113 @@
+COMP 3270 - Programming Assignment 1: Time Complexity vs. Real Time
+====================================================================
+
+An empirical study of the relationship between an algorithm's theoretical
+time complexity and its measured wall-clock running time. This was completed
+for COMP 3270 (Introduction to Algorithms) at Auburn University.
+
+
+OVERVIEW
+--------
+
+The assignment implements a divide-and-conquer algorithm, ComputePower(x, n),
+that computes x^n for a real number 0 <= x < 1 and an integer n. The program
+times the algorithm for a wide range of n, then normalizes the measured time
+T(n) against three candidate growth functions:
+
+    g1(n) = 0.5 * n * log(n)
+    g2(n) = 7 * log(n)
+    g3(n) = 2 * n^2
+
+The idea is simple: if T(n) truly grows like g(n), then a plot of T(n) / g(n)
+will flatten into a horizontal line for large n. Plotting the three ratios
+makes it possible to read the asymptotic growth of T(n) directly off the
+graphs instead of guessing from the raw timing curve.
+
+
+THE ALGORITHM
+-------------
+
+ComputePower uses exponentiation by squaring. It recursively computes
+x^(n/2), squares the result, and multiplies by one extra factor of x when n
+is odd:
+
+    ComputePower(x, n)
+      if n == 0: return 1
+      if n == 1: return x
+      pow = ComputePower(x, n/2)
+      if n is even: return pow * pow
+      else:         return x * pow * pow
+
+Each call halves n, so the recursion depth is about log2(n) and the algorithm
+runs in Theta(log n) time. This means we expect T(n) / g2(n) to be roughly
+flat, while T(n) / g1(n) and T(n) / g3(n) should decay toward zero.
+
+
+REPOSITORY CONTENTS
+-------------------
+
+collectData.cpp
+    C++ source. Implements ComputePower and the timing loop, and writes the
+    results to data.csv.
+
+data.csv
+    The data file ("File F") produced by running the program.
+    Columns: n, T(n)/g1(n), T(n)/g2(n), T(n)/g3(n).
+
+
+HOW IT WORKS
+------------
+
+collectData.cpp loops n from 7,500 to 1,000,000 in steps of 100. For each n
+it:
+
+  1. Records a timestamp with std::chrono::high_resolution_clock.
+  2. Calls ComputePower(0.75, n).
+  3. Records a second timestamp and computes the elapsed time T(n) in
+     nanoseconds.
+  4. Computes g1(n), g2(n), and g3(n) (using log base 2).
+  5. Writes n and the three ratios T(n)/gi(n) as one CSV row.
+
+
+BUILDING AND RUNNING
+--------------------
+
+The program was compiled and run on Auburn's Engineering Tux (Linux)
+machines, but it only depends on the C++ standard library and should build
+anywhere with a C++11-or-newer compiler.
+
+    g++ -O2 -o collectData collectData.cpp -lm
+    ./collectData
+
+When it finishes, the program prints "Data collection complete. Saved to
+data.csv" and the CSV file will be in the current directory. Each run
+produces slightly different timings, since wall-clock measurements depend on
+the machine and its current load.
+
+
+PLOTTING THE RESULTS
+--------------------
+
+Open data.csv in Excel, Google Sheets, or any plotting tool and plot each
+ratio column against n on its own graph. From the collected data:
+
+  - T(n)/g1(n) decreases as n grows, so T(n) grows slower than n log n.
+  - T(n)/g2(n) stays roughly flat, so T(n) grows at about the same rate as
+    log n. This matches the Theta(log n) analysis.
+  - T(n)/g3(n) drops toward zero quickly, so T(n) grows far slower than n^2.
+
+Spikes and noise in the plots are expected: the timing was collected on a
+shared server, so other users' processes occasionally inflate an individual
+measurement.
+
+
+NOTES
+-----
+
+  - x = 0.75 was used as the base for every run. Since 0 <= x < 1, the
+    result underflows to zero for large n, but that does not affect the
+    timing -- the algorithm does the same amount of work regardless of the
+    value.
+  - Timing resolution is in nanoseconds, and single calls are very fast, so
+    the raw T(n) values are small and noisy. The ratio plots are what reveal
+    the trend.

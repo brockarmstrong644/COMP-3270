@@ -1,5 +1,5 @@
-COMP 3270 - Programming Assignment 1: Time Complexity vs. Real Time
-====================================================================
+COMP 3270 - Programming Assignment 1: Time Complexity vs. Real Time of different sized functions
+=================================================================================================
 
 An empirical study of the relationship between an algorithm's theoretical
 time complexity and its measured wall-clock running time. This was completed

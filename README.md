@@ -5,4 +5,4 @@ AU COMP 3270 Intro to Algorithms
 
 ## Programming Assignments
     COMP 3270 - Programming Assignment 1:   
-     {Time Complexity vs. Real Time}
+     {Time Complexity vs. Real Time of different size functions}

@@ -4,5 +4,8 @@ AU COMP 3270 Intro to Algorithms
 
 
 ## Programming Assignments
-    COMP 3270 - Programming Assignment 1:   
-     {Time Complexity vs. Real Time of different size functions}
+    Programming Assignment 1:   
+     {Empirical Analysis of Time Complexity vs. Real Execution Time}
+
+    Programming Assignment 2:
+    {QuickSort Empirical Performance & Time Complexity Analysis}
